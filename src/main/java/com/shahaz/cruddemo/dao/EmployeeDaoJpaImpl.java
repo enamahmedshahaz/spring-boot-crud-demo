@@ -20,7 +20,9 @@ public class EmployeeDaoJpaImpl implements EmployeeDao {
     @Override
     public List<Employee> findAll() {
         //create query
-        TypedQuery<Employee> theQuery = entityManager.createQuery("FROM employee", Employee.class);
+        //Here Query represents the Java POJO Employee Class. So in query string
+        //'Employee' can't be written as 'employee'
+        TypedQuery<Employee> theQuery = entityManager.createQuery("FROM Employee", Employee.class);
 
         //execute query and get result list
         List<Employee> employeeList =   theQuery.getResultList();
