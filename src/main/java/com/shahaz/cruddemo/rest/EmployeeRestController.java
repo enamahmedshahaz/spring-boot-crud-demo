@@ -4,11 +4,9 @@ import com.shahaz.cruddemo.dao.EmployeeDao;
 import com.shahaz.cruddemo.entity.Employee;
 import com.shahaz.cruddemo.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.EventObject;
 import java.util.List;
 
 @RestController
@@ -23,17 +21,56 @@ public class EmployeeRestController {
     }
 
     @GetMapping("/employees")
-    public List<Employee> findAll() {
-        return employeeService.findAll();
+    public List<Employee> getAllEmployees() {
+
+        List<Employee> employeeList = employeeService.findAll();
+
+        return employeeList;
     }
 
     @GetMapping("/employees/{employeeId}")
-    public Employee findById(@PathVariable int employeeId) {
+    public Employee getEmployee(@PathVariable int employeeId) {
+
         Employee theEmployee = employeeService.findById(employeeId);
+
         if (theEmployee == null) {
             throw new RuntimeException("Employee not found with id: " + employeeId);
         }
+
         return theEmployee;
+    }
+
+    @PostMapping("/employees")
+    public Employee addEmployee(@RequestBody Employee theEmployee) {
+
+        //in case of add a new Employee, if they add any id, set it to 0
+        theEmployee.setId(0);
+        Employee dbEmployee = employeeService.save(theEmployee);
+
+        return dbEmployee;
+    }
+
+    @PutMapping("/employees")
+    public Employee updateEmployee(@RequestBody Employee theEmployee) {
+
+        Employee dbEmployee = employeeService.save(theEmployee);
+
+        return dbEmployee;
+    }
+
+
+    @DeleteMapping("/employees/{employeeId}")
+    public String deleteEmployee(@PathVariable int employeeId) {
+
+        Employee theEmployee = employeeService.findById(employeeId);
+        //if given id not found
+        if (theEmployee == null) {
+            throw  new RuntimeException("Employee not found with id: "+employeeId);
+        }
+
+        employeeService.deleteById(employeeId);
+
+        return "Deleted employee id: "+employeeId;
     }
 
 }
